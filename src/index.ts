@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 
-import router from './routes/Routes';
+import roleRouter from './routes/roleRoutes';
+import userRouter from './routes/userRoutes';
 
 const app = express();
 app.use(express.json());
@@ -16,7 +17,8 @@ app.get('/', (req: Request, res: Response) => {
     })
 })
 
-app.use('/roles', router);
+app.use('/roles', roleRouter);
+app.use('/users', userRouter);
 
 app.listen(Port, () => {
     console.log(['Info'], `${process.env.APP_NAME}`, `Server started on port ${Port}`);
