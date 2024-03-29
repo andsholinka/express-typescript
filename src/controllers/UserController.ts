@@ -60,7 +60,6 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
         res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
 
         const responseUser = {
-            id: user.id,
             username: user.username,
             email: user.email,
             roleId: user.roleId,
@@ -75,4 +74,42 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
     }
 }
 
-export default { Register, Login }
+const RefreshToken = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const refreshToken = req.cookies?.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).send(Helper.ResponseData(401, "unauthorized", null, null));
+        }
+
+        const decodedUser = Helper.ExtractToken(refreshToken);
+
+
+        if (!decodedUser) {
+            return res.status(401).send(Helper.ResponseData(401, "unauthorized", null, null));
+        }
+
+        const token = Helper.GenerateToken({
+            username: decodedUser.username,
+            email: decodedUser.email,
+            roleId: decodedUser.roleId,
+            isVerified: decodedUser.isVerified,
+            isActive: decodedUser.isActive,
+        });
+
+        const resultUser = {
+            username: decodedUser.username,
+            email: decodedUser.email,
+            roleId: decodedUser.roleId,
+            isVerified: decodedUser.isVerified,
+            isActive: decodedUser.isActive,
+            accessToken: token
+        }
+
+        return res.status(200).send(Helper.ResponseData(200, "OK", null, resultUser));
+    } catch (error: any) {
+        return res.status(500).send(Helper.ResponseData(500, "", error, null));
+    }
+}
+
+export default { Register, Login, RefreshToken }

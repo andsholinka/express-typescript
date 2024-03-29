@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import roleRouter from './routes/roleRoutes';
@@ -6,6 +7,7 @@ import userRouter from './routes/userRoutes';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 dotenv.config();
 
