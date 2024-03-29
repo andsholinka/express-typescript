@@ -26,4 +26,32 @@ const getRoles = async (req: Request, res: Response): Promise<Response> => {
     }
 }
 
-export default { getRoles }
+const createRoles = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const { roleName, isActive } = req.body;
+        const create = await Role.create({
+            roleName,
+            isActive
+        })
+
+        return res.status(201).send({
+            status: 201,
+            message: "Success",
+            data: create
+        })
+    } catch (error: any) {
+        if (error != null && error instanceof Error) {
+            return res.status(500).send({
+                status: 500,
+                message: error.message
+            })
+        }
+
+        return res.status(500).send({
+            status: 500,
+            message: "Internal Server Error",
+            error
+        })
+    }
+}
+export default { getRoles, createRoles }

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import router from './routes/Routes';
 
 const app = express();
+app.use(express.json());
+
 dotenv.config();
 
 const Port = process.env.APP_PORT || 3000;
