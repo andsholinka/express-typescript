@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 
+import router from './routes/Routes';
+
 const app = express();
 dotenv.config();
 
@@ -11,6 +13,8 @@ app.get('/', (req: Request, res: Response) => {
         message: 'Hello World!'
     })
 })
+
+app.use(router);
 
 app.listen(Port, () => {
     console.log(['Info'], `${process.env.APP_NAME}`, `Server started on port ${Port}`);
