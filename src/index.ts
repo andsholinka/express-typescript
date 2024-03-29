@@ -16,7 +16,7 @@ app.get('/', (req: Request, res: Response) => {
     })
 })
 
-app.use(router);
+app.use('/roles', router);
 
 app.listen(Port, () => {
     console.log(['Info'], `${process.env.APP_NAME}`, `Server started on port ${Port}`);
