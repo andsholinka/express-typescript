@@ -54,4 +54,47 @@ const createRoles = async (req: Request, res: Response): Promise<Response> => {
         })
     }
 }
-export default { getRoles, createRoles }
+
+const updateRole = async (req: Request, res: Response): Promise<Response> => {
+
+    try {
+        const { id } = req.params;
+        const { roleName, isActive } = req.body;
+
+        const role = await Role.findByPk(id);
+
+        if (!role) {
+            return res.status(404).send({
+                status: 404,
+                message: "Role not found",
+                data: null
+            })
+        }
+
+        role.roleName = roleName;
+        role.isActive = isActive;
+
+        await role.save();
+
+        return res.status(200).send({
+            status: 200,
+            message: 'OK',
+            data: role
+        });
+    } catch (error: any) {
+        if (error != null && error instanceof Error) {
+            return res.status(500).send({
+                status: 500,
+                message: error.message
+            })
+        }
+
+        return res.status(500).send({
+            status: 500,
+            message: "Internal Server Error",
+            error
+        })
+    }
+}
+
+export default { getRoles, createRoles, updateRole }
