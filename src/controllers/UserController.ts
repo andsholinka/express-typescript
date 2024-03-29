@@ -25,4 +25,54 @@ const Register = async (req: Request, res: Response): Promise<Response> => {
     }
 }
 
-export default { Register }
+const Login = async (req: Request, res: Response): Promise<Response> => {
+
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(401).send(Helper.ResponseData(401, "unauthorized", null, null));
+        }
+
+        const match = await passwordHelper.PasswordCompare(password, user.password);
+
+        if (!match) {
+            return res.status(401).send(Helper.ResponseData(401, "unauthorized", null, null));
+        }
+
+        const dataUser = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roleId: user.roleId,
+            isVerified: user.isVerified,
+            isActive: user.isActive
+        }
+
+        const token = Helper.GenerateToken(dataUser);
+        const refreshToken = Helper.GenerateRefreshToken(dataUser);
+
+        user.accessToken = refreshToken;
+        await user.save();
+
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+
+        const responseUser = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roleId: user.roleId,
+            isVerified: user.isVerified,
+            isActive: user.isActive,
+            accessToken: token
+        }
+
+        return res.status(200).send(Helper.ResponseData(200, "OK", null, responseUser));
+    } catch (error: any) {
+        return res.status(500).send(Helper.ResponseData(500, "", error, null));
+    }
+}
+
+export default { Register, Login }
