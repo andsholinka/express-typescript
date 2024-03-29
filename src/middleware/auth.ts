@@ -14,6 +14,7 @@ const Auth = async (req: Request, res: Response, next: NextFunction) => {
             return res.status(401).send(Helper.ResponseData(401, "Unauthorized", null, null));
         }
 
+        res.locals.userEmail = userData?.email
         next()
 
     } catch (error: any) {
