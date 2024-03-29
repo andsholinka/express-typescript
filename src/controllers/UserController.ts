@@ -6,17 +6,7 @@ import passwordHelper from "../helpers/passwordHelper";
 const Register = async (req: Request, res: Response): Promise<Response> => {
 
     try {
-        const { username, email, password, confirmPassword } = req.body;
-
-        if (password !== confirmPassword) {
-            return res.status(400).send(Helper.ResponseData(400, "Password and confirm password does not match", null, null));
-        }
-
-        const emailExist = await User.findOne({ where: { email }, attributes: ['id'] });
-
-        if (emailExist) {
-            return res.status(400).send(Helper.ResponseData(400, "Email already exists", null, null));
-        }
+        const { username, email, password } = req.body;
 
         const hashed = await passwordHelper.PasswordHash(password);
 
