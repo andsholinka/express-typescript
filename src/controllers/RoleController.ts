@@ -134,4 +134,41 @@ const deleteRole = async (req: Request, res: Response): Promise<Response> => {
     }
 }
 
-export default { getRoles, createRoles, updateRole, deleteRole }
+const getRoleById = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const { id } = req.params;
+
+        const role = await Role.findByPk(id);
+
+        if (!role) {
+            return res.status(404).send({
+                status: 404,
+                message: "Role not found",
+                data: null
+            })
+        }
+
+        await Role?.sequelize?.query(`SELECT * FROM roles WHERE id = '${id}'`, { type: QueryTypes.SELECT });
+        return res.status(200).send({
+            status: 200,
+            message: "Success",
+            data: role
+        })
+
+    } catch (error: any) {
+        if (error != null && error instanceof Error) {
+            return res.status(500).send({
+                status: 500,
+                message: error.message
+            })
+        }
+
+        return res.status(500).send({
+            status: 500,
+            message: "Internal Server Error",
+            error
+        })
+    }
+}
+
+export default { getRoles, createRoles, updateRole, deleteRole, getRoleById }
